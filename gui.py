@@ -209,13 +209,13 @@ class MetadataRemoverGUI:
     
     def create_action_buttons(self, parent):
         """Create the main action buttons."""
-        action_frame = ttk.Frame(parent)
+        action_frame = ttk.LabelFrame(parent, text="⚡ Action", padding="10")
         action_frame.pack(fill=tk.X, pady=(0, 5))
         
-        self.btn_process = ttk.Button(action_frame, text="🚀 Remove Metadata & Clean Images",
+        self.btn_process = ttk.Button(action_frame, text="🚀 REMOVE METADATA & CLEAN IMAGES",
                                      command=self.process_images, 
                                      style="Success.TButton")
-        self.btn_process.pack(fill=tk.X, ipady=8)
+        self.btn_process.pack(fill=tk.X, ipady=12)
     
     def on_drop(self, event):
         """Handle drag and drop event."""
