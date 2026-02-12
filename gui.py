@@ -35,6 +35,9 @@ class MetadataRemoverGUI:
         # Create UI
         self.create_widgets()
         
+        # Disable process button initially (no images selected)
+        self.update_button_state()
+        
         # Center window
         self.center_window()
     
@@ -151,16 +154,17 @@ class MetadataRemoverGUI:
     def create_file_list_section(self, parent):
         """Create the file list section."""
         list_frame = ttk.LabelFrame(parent, text="📋 Selected Images", padding="10")
-        list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
+        list_frame.pack(fill=tk.X, pady=(0, 8))  # Changed from BOTH to X, removed expand
         
         # Info label
         self.file_count_label = ttk.Label(list_frame, text="No images selected",
                                          style="Info.TLabel")
         self.file_count_label.pack(anchor=tk.W, pady=(0, 5))
         
-        # Scrollable listbox
-        list_container = ttk.Frame(list_frame)
-        list_container.pack(fill=tk.BOTH, expand=True)
+        # Scrollable listbox with FIXED height
+        list_container = ttk.Frame(list_frame, height=150)
+        list_container.pack(fill=tk.X)
+        list_container.pack_propagate(False)  # Prevent expansion
         
         scrollbar = ttk.Scrollbar(list_container)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -289,6 +293,16 @@ class MetadataRemoverGUI:
             self.file_count_label.config(text="1 image selected")
         else:
             self.file_count_label.config(text=f"{count} images selected")
+        
+        # Update button state based on file count
+        self.update_button_state()
+    
+    def update_button_state(self):
+        """Enable or disable the process button based on whether images are selected."""
+        if len(self.file_list) > 0:
+            self.btn_process.config(state=tk.NORMAL)
+        else:
+            self.btn_process.config(state=tk.DISABLED)
     
     def choose_output_folder(self):
         """Choose a custom output folder."""
