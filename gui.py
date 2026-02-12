@@ -18,8 +18,8 @@ class MetadataRemoverGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Metadata Remover - 100% Clean Images")
-        self.root.geometry("900x700")
-        self.root.minsize(800, 600)
+        self.root.geometry("900x750")
+        self.root.minsize(850, 650)
         
         # Initialize metadata remover
         self.remover = MetadataRemover()
@@ -79,8 +79,8 @@ class MetadataRemoverGUI:
     
     def create_widgets(self):
         """Create all UI widgets."""
-        # Main container
-        main_frame = ttk.Frame(self.root, padding="20")
+        # Main container with reduced padding
+        main_frame = ttk.Frame(self.root, padding="10")
         main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Header
@@ -104,7 +104,7 @@ class MetadataRemoverGUI:
     def create_header(self, parent):
         """Create the header section."""
         header_frame = ttk.Frame(parent)
-        header_frame.pack(fill=tk.X, pady=(0, 20))
+        header_frame.pack(fill=tk.X, pady=(0, 10))
         
         title = ttk.Label(header_frame, text="🖼️ Image Metadata Remover", 
                          style="Title.TLabel")
@@ -117,13 +117,13 @@ class MetadataRemoverGUI:
     
     def create_upload_section(self, parent):
         """Create the upload section with drag-and-drop."""
-        upload_frame = ttk.LabelFrame(parent, text="📁 Upload Images", padding="15")
-        upload_frame.pack(fill=tk.X, pady=(0, 10))
+        upload_frame = ttk.LabelFrame(parent, text="📁 Upload Images", padding="10")
+        upload_frame.pack(fill=tk.X, pady=(0, 8))
         
         # Drag and drop area
         drop_frame = tk.Frame(upload_frame, bg="#e3f2fd", relief=tk.RIDGE, 
-                             borderwidth=2, height=120)
-        drop_frame.pack(fill=tk.X, pady=(0, 10))
+                             borderwidth=2, height=90)
+        drop_frame.pack(fill=tk.X, pady=(0, 8))
         drop_frame.pack_propagate(False)
         
         # Enable drag and drop
@@ -133,7 +133,7 @@ class MetadataRemoverGUI:
         drop_label = tk.Label(drop_frame, 
                              text="🎯 Drag & Drop Images Here\n\nSupported formats: JPG, PNG, TIFF, WebP, BMP",
                              bg="#e3f2fd", fg="#1976D2", 
-                             font=("Segoe UI", 11, "bold"))
+                             font=("Segoe UI", 10, "bold"))
         drop_label.pack(expand=True)
         
         # Upload buttons
@@ -150,8 +150,8 @@ class MetadataRemoverGUI:
     
     def create_file_list_section(self, parent):
         """Create the file list section."""
-        list_frame = ttk.LabelFrame(parent, text="📋 Selected Images", padding="15")
-        list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        list_frame = ttk.LabelFrame(parent, text="📋 Selected Images", padding="10")
+        list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         
         # Info label
         self.file_count_label = ttk.Label(list_frame, text="No images selected",
@@ -178,40 +178,44 @@ class MetadataRemoverGUI:
     
     def create_output_section(self, parent):
         """Create the output folder selection section."""
-        output_frame = ttk.LabelFrame(parent, text="💾 Output Folder", padding="15")
-        output_frame.pack(fill=tk.X, pady=(0, 10))
+        output_frame = ttk.LabelFrame(parent, text="💾 Output Folder", padding="10")
+        output_frame.pack(fill=tk.X, pady=(0, 8))
         
-        self.output_label = ttk.Label(output_frame, 
-                                     text="Default: A 'cleaned_images' folder will be created in the source directory",
-                                     style="Info.TLabel", wraplength=700)
-        self.output_label.pack(anchor=tk.W, pady=(0, 10))
+        # Container for label and button
+        content_frame = ttk.Frame(output_frame)
+        content_frame.pack(fill=tk.X)
         
-        btn_output = ttk.Button(output_frame, text="📂 Choose Output Folder",
+        self.output_label = ttk.Label(content_frame, 
+                                     text="Default: 'cleaned_images' folder in source directory",
+                                     style="Info.TLabel", wraplength=600)
+        self.output_label.pack(anchor=tk.W, pady=(0, 8))
+        
+        btn_output = ttk.Button(content_frame, text="📂 Choose Output Folder",
                                command=self.choose_output_folder, 
                                style="Primary.TButton")
         btn_output.pack(anchor=tk.W)
     
     def create_progress_section(self, parent):
         """Create the progress section."""
-        progress_frame = ttk.Frame(parent)
-        progress_frame.pack(fill=tk.X, pady=(0, 10))
+        progress_frame = ttk.LabelFrame(parent, text="📊 Progress", padding="10")
+        progress_frame.pack(fill=tk.X, pady=(0, 8))
         
         self.progress_label = ttk.Label(progress_frame, text="Ready to process images",
                                        style="Info.TLabel")
         self.progress_label.pack(anchor=tk.W, pady=(0, 5))
         
-        self.progress_bar = ttk.Progressbar(progress_frame, mode='determinate')
+        self.progress_bar = ttk.Progressbar(progress_frame, mode='determinate', length=400)
         self.progress_bar.pack(fill=tk.X)
     
     def create_action_buttons(self, parent):
         """Create the main action buttons."""
         action_frame = ttk.Frame(parent)
-        action_frame.pack(fill=tk.X)
+        action_frame.pack(fill=tk.X, pady=(0, 5))
         
         self.btn_process = ttk.Button(action_frame, text="🚀 Remove Metadata & Clean Images",
                                      command=self.process_images, 
                                      style="Success.TButton")
-        self.btn_process.pack(fill=tk.X, ipady=10)
+        self.btn_process.pack(fill=tk.X, ipady=8)
     
     def on_drop(self, event):
         """Handle drag and drop event."""
@@ -291,7 +295,9 @@ class MetadataRemoverGUI:
         folder = filedialog.askdirectory(title="Select output folder")
         if folder:
             self.output_folder = folder
-            self.output_label.config(text=f"Output folder: {folder}")
+            # Shorten path if too long
+            display_path = folder if len(folder) < 60 else "..." + folder[-57:]
+            self.output_label.config(text=f"Output: {display_path}")
     
     def get_output_folder(self):
         """Get the output folder path."""
