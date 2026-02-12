@@ -18,8 +18,8 @@ class MetadataRemoverGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Metadata Remover - 100% Clean Images")
-        self.root.geometry("900x750")
-        self.root.minsize(850, 650)
+        self.root.geometry("900x700")
+        self.root.minsize(850, 600)
         
         # Initialize metadata remover
         self.remover = MetadataRemover()
@@ -125,7 +125,7 @@ class MetadataRemoverGUI:
         
         # Drag and drop area
         drop_frame = tk.Frame(upload_frame, bg="#e3f2fd", relief=tk.RIDGE, 
-                             borderwidth=2, height=90)
+                             borderwidth=2, height=80)
         drop_frame.pack(fill=tk.X, pady=(0, 8))
         drop_frame.pack_propagate(False)
         
@@ -162,7 +162,7 @@ class MetadataRemoverGUI:
         self.file_count_label.pack(anchor=tk.W, pady=(0, 5))
         
         # Scrollable listbox with FIXED height
-        list_container = ttk.Frame(list_frame, height=150)
+        list_container = ttk.Frame(list_frame, height=120)
         list_container.pack(fill=tk.X)
         list_container.pack_propagate(False)  # Prevent expansion
         
@@ -213,13 +213,14 @@ class MetadataRemoverGUI:
     
     def create_action_buttons(self, parent):
         """Create the main action buttons."""
-        action_frame = ttk.LabelFrame(parent, text="⚡ Action", padding="10")
-        action_frame.pack(fill=tk.X, pady=(0, 5))
+        # Use simple Frame instead of LabelFrame to save space
+        action_frame = ttk.Frame(parent)
+        action_frame.pack(fill=tk.X, pady=(5, 5))
         
-        self.btn_process = ttk.Button(action_frame, text="🚀 REMOVE METADATA & CLEAN IMAGES",
+        self.btn_process = ttk.Button(action_frame, text="🚀 REMOVE ALL METADATA",
                                      command=self.process_images, 
                                      style="Success.TButton")
-        self.btn_process.pack(fill=tk.X, ipady=12)
+        self.btn_process.pack(fill=tk.X, ipady=15)
     
     def on_drop(self, event):
         """Handle drag and drop event."""
@@ -327,10 +328,12 @@ class MetadataRemoverGUI:
     
     def update_progress(self, current, total, message):
         """Update progress bar and label."""
-        progress = (current / total) * 100
-        self.progress_bar['value'] = progress
-        self.progress_label.config(text=f"Processing: {current}/{total} - {message}")
-        self.root.update_idletasks()
+        def _update():
+            progress = (current / total) * 100
+            self.progress_bar['value'] = progress
+            self.progress_label.config(text=f"Processing: {current}/{total} - {message}")
+        
+        self.root.after(0, _update)
     
     def process_images(self):
         """Process all images in the list."""
